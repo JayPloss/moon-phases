@@ -13,6 +13,38 @@ let age = 17.5, t = 8.27;
 const ageSliders = [...document.querySelectorAll('.age')], timeSliders = [...document.querySelectorAll('.time')];
 ageSliders.forEach((s) => { s.max = SYNODIC.toFixed(2); });
 
+// The age line under the sky view is a second handle on the same age: drag it sideways, or use the arrow keys.
+// Its full width sweeps one whole cycle (29.53 days). A mostly vertical drag is left to scroll the page.
+const scrub = document.querySelector('.scrub'), scrubOut = document.getElementById('ageScrub');
+const clampAge = (a) => Math.min(SYNODIC, Math.max(0, a));
+let drag = null, dragged = false;
+scrub.addEventListener('pointerdown', (e) => {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, from: age, mode: null }; dragged = false;
+});
+scrub.addEventListener('pointermove', (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.mode) {
+    if (Math.hypot(dx, dy) < 6) return;
+    drag.mode = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+    if (drag.mode === 'v') { drag = null; return; }
+    scrub.setPointerCapture(e.pointerId); scrub.classList.add('grabbing'); dragged = true; clearBeat();
+  }
+  e.preventDefault();
+  age = clampAge(drag.from + (dx / scrub.clientWidth) * SYNODIC); render();
+});
+const endDrag = () => { drag = null; scrub.classList.remove('grabbing'); };
+scrub.addEventListener('pointerup', endDrag); scrub.addEventListener('pointercancel', endDrag);
+// A drag ends with a click on the label, which would otherwise move focus to the slider.
+scrub.addEventListener('click', (e) => { if (dragged) { e.preventDefault(); dragged = false; } });
+scrubOut.addEventListener('keydown', (e) => {
+  const step = e.shiftKey ? 1 : 0.1;
+  const next = { ArrowLeft: age - step, ArrowDown: age - step, ArrowRight: age + step, ArrowUp: age + step, Home: 0, End: SYNODIC }[e.key];
+  if (next === undefined) return;
+  e.preventDefault(); clearBeat(); age = clampAge(next); render();
+});
+
 const wrapAge = (a) => ((a % SYNODIC) + SYNODIC) % SYNODIC;
 
 function render() {
@@ -21,6 +53,7 @@ function render() {
   ageSliders.forEach((s) => { s.value = age; }); timeSliders.forEach((s) => { s.value = t; });
   const ageText = `Day ${age.toFixed(1)} of 29.53 · ${phaseName(age)} · ${Math.round(r.st.lit * 100)}% lit`;
   document.querySelectorAll('.ageOut').forEach((o) => { o.textContent = ageText; });
+  scrubOut.setAttribute('aria-valuenow', age.toFixed(2)); scrubOut.setAttribute('aria-valuetext', ageText);
   document.querySelectorAll('.timeOut').forEach((o) => { o.textContent = clock(t); });
   // Phase name from the same lit percentage, shown in the 3D panel's top corner.
   $('phaseTag').innerHTML = `${phaseName(age)}<small>${Math.round(r.st.lit * 100)}% lit</small>`;
