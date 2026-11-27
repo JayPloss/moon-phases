@@ -18,22 +18,6 @@
     </div>
     <p class="intro">The sky looks like a painting, but the geometry is simple: the Sun lights half the Moon, and we see
       that half from a different angle as the Moon circles us.</p>
-    <details class="howto">
-      <summary>How to use</summary>
-      <ul>
-        <li>The page has three levels, shown one at a time; the buttons at the bottom of each level go on or back.
-          <b>1</b> is the phases and the geometry behind them, <b>2</b> how high the Moon rides, <b>3</b> the angle of
-          its lit edge.</li>
-        <li><b>3D view:</b> drag to turn it, pinch or scroll to zoom. The red cone is you, the green disc your horizon:
-          whatever is above the disc is in your sky. The orange arc is the Sun–Earth–Moon angle. Sizes and distances are
-          not to scale. The name in the top corner is the phase that angle gives.</li>
-        <li>The Moon is lit only by the Sun, so its bright half always faces the Sun.</li>
-        <li><b>Moon's age</b> moves through the month; <b>time of day</b> turns the sky. In level 1 each panel has its own
-          sliders and both move both views.</li>
-        <li><b>The sky:</b> looking south, east on the left. The four numbered buttons jump to four moments;
-          <b>Play the month</b> runs 29.5 days at the same clock time.</li>
-      </ul>
-    </details>
   </header>
 
   <!-- ===================== Level 1 ===================== -->
@@ -43,7 +27,7 @@
     <section class="panel orbit" aria-labelledby="orbitTitle">
       <div class="panelGrid">
         <div class="view">
-          <h3 id="orbitTitle">The geometry: Earth held still, Sun and Moon going round</h3>
+          <h3 id="orbitTitle">Phases in geometry</h3>
           <div class="orbitWrap">
             <div id="orbit"></div>
             <div id="orbitLabels"></div>
@@ -57,7 +41,6 @@
           <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
           <label for="time1">Time of day <output class="timeOut"></output></label>
           <input id="time1" class="time" type="range" min="0" max="24" step="0.0166667">
-          <button class="play">▶ Play the month</button>
         </div>
       </div>
     </section>
@@ -68,21 +51,11 @@
         <div class="view">
           <h3 id="skyTitle">The sky, looking south from <span class="place">45.2°N – Knowlton, QC</span></h3>
           <canvas id="sky" aria-label="Sky view: east on the left, west on the right"></canvas>
-          <p id="status" class="status"></p>
-          <div class="hours" aria-live="polite">
-            <p id="hoursNow" class="hoursNow"></p>
-            <p class="hoursPoint">Most people only look up at night, but the Moon is up about 12 hours a day, and over a
-              month as much of that is in daylight as in the dark<span id="hoursMonth"></span>.</p>
-            <p class="fineLine">Simplified model: the Moon's arc is held to the same height as the Sun's, so only its
-              timing changes.</p>
-          </div>
-          <p class="later">Real moons ride higher or lower through the month, and higher in winter than in summer –
-            level 2 shows it.</p>
         </div>
         <div class="controls" role="group" aria-label="Sky controls">
           <div class="beats" aria-label="Four moments">
             <button class="beat" data-beat="a"><span>1</span> Setting before sunrise</button>
-            <button class="beat" data-beat="b"><span>2</span> Full: tango break</button>
+            <button class="beat" data-beat="b"><span>2</span> Full: sets at sunrise</button>
             <button class="beat" data-beat="c"><span>3</span> Daytime moon, now</button>
             <button class="beat" data-beat="d"><span>4</span> New: rises with the Sun</button>
           </div>
@@ -95,16 +68,10 @@
           <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
           <label for="time2">Time of day <output class="timeOut"></output></label>
           <input id="time2" class="time" type="range" min="0" max="24" step="0.0166667">
-          <button class="play">▶ Play the month</button>
         </div>
       </div>
     </section>
 
-    <p class="fine">How level 1 is worked out: an observer at 45.2° north (Knowlton, Quebec), the Sun and the Moon both
-      on the celestial equator, as the Sun is at the equinoxes, the Moon moving at its average speed, clock times in
-      local sun time (noon = Sun due south). Rise and set are when the centre crosses a flat horizon, without the few
-      minutes air refraction adds. Because of that simplification, real moonrise and moonset times differ from these by
-      up to about two hours, and real sunrise in late November is about 7:30 am.</p>
     <nav class="levelNav" aria-label="Levels">
       <button class="go fwd" data-go="2">Proceed to level 2 →</button>
     </nav>
@@ -151,7 +118,7 @@
   <section id="level3" class="level" hidden aria-labelledby="l3h">
     <h2 id="l3h" class="levelHead"><span class="num">3</span> The angle of the lit edge</h2>
     <p class="lead">The lit edge always points along the sky toward the Sun. As the Moon crosses the sky, the direction to
-      the Sun turns against your horizon, so the same phase can sit like a bowl at one hour and stand on edge at another.</p>
+      the Sun turns against your horizon, so the same phase sits at a different angle at different hours.</p>
     <div class="presets">
       <button data-tilt="22.1,1">Last quarter, 1 am</button>
       <button data-tilt="22.4,8">Last quarter, 8 am</button>
@@ -181,18 +148,8 @@
     </nav>
   </section>
 
-  <section class="notes">
-    <h2>Two numbers worth knowing</h2>
-    <p>The Moon goes once round the Earth, measured against the stars, in <b>27.32 days</b>. But in that time the Sun
-      has moved on along its own yearly path, so the Moon needs about two more days to catch up with it again: new moon
-      to new moon is <b>29.53 days</b>. That catching-up works out to about 12° a day, which is why moonrise slips later
-      by about 50 minutes each day.</p>
-    <p>If the Moon's orbit lay flat on the Sun's path we would get an eclipse every new and full moon. It is tilted by
-      about <b>5.1°</b>, so most months the Moon passes a little above or below the Sun or Earth's shadow; eclipses
-      only happen when a new or full moon falls where the two paths cross.</p>
-  </section>
-
-  <section class="why" aria-labelledby="whyTitle">
+  <details class="why readMore">
+    <summary>Read more</summary>
     <h2 id="whyTitle">Why it is worth looking up</h2>
     <p>The Moon has been our calendar for as long as there are records, and it still is for a lot of people. The Hebrew
       and Chinese calendars count their months by the Moon and add a month every few years to keep up with the seasons;
@@ -244,10 +201,10 @@
           <a href="https://extension.illinois.edu/blogs/garden-scoop/2022-04-16-lunar-influence-gardening">extension.illinois.edu</a></li>
       </ol>
     </details>
-  </section>
+  </details>
 
   <footer>
-    <p>Made for Ben Roberts, 2026-11-27 - standard astronomy, no magic numbers.</p>
+    <p>Made for Ben Roberts, 2026-11-27.</p>
     <p>Moon image: “Waxing Gibbous”, NASA's Goddard Space Flight Center Scientific Visualization Studio, rendered from
       Lunar Reconnaissance Orbiter (LROC and LOLA) data; NASA Image and Video Library, GSFC_20171208_Archive_e000867.
       NASA imagery is not protected by copyright in the United States (public domain).</p>

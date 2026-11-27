@@ -155,8 +155,8 @@ export function litAngle(st) {
 }
 export function describeTilt(phi) {
   const tilt = Math.min(Math.abs(phi), 180 - Math.abs(phi));   // terminator's angle from upright
-  if (tilt < 20) return `terminator nearly upright (${tilt.toFixed(0)}° from vertical): a knife edge`;
-  if (tilt > 70) return phi < 0 ? `lit from below, terminator nearly level (${tilt.toFixed(0)}° from vertical): a bowl` : `lit from above, terminator nearly level (${tilt.toFixed(0)}° from vertical): horns down`;
+  if (tilt < 20) return `terminator nearly upright (${tilt.toFixed(0)}° from vertical)`;
+  if (tilt > 70) return phi < 0 ? `lit from below, terminator nearly level (${tilt.toFixed(0)}° from vertical)` : `lit from above, terminator nearly level (${tilt.toFixed(0)}° from vertical)`;
   return `terminator tilted ${tilt.toFixed(0)}° from vertical, lit side toward the ${phi < 0 ? 'lower' : 'upper'} ${Math.abs(phi) < 90 ? 'right' : 'left'}`;
 }
 function drawMoon(g, cx, cy, r, phi, E, highlight) {

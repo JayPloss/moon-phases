@@ -4,7 +4,7 @@
 The page has three levels, shown one at a time: the page opens on level 1, and buttons at the bottom of each level
 go on or back (`#level2`, `#level3` in the address):
 1. Phases and geometry: the 3D panel first, then the sky panel; each has its own sliders and both drive one shared
-   state. Simplified model: Sun and Moon both on the celestial equator, so the Moon's arc matches the Sun's and only
+   state. Level 1 model: Sun and Moon both on the celestial equator, so the Moon's arc matches the Sun's and only
    its timing changes with phase.
 2. How high the Moon rides: the real ecliptic, the Sun placed by date, arcs and a month chart of the Moon's highest point.
 3. The angle of the lit edge: the Moon drawn along its real path with the lit edge at its true angle.

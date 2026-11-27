@@ -1,4 +1,4 @@
-// 3D geocentric view: Earth held still, the Sun and Moon carried around it.
+// 3D geocentric view: the Sun and Moon carried around a fixed Earth.
 // Positions come from the same direction vectors as the sky view (js/astro.js).
 import * as THREE from '../vendor/three.module.min.js';
 import { OrbitControls } from '../vendor/OrbitControls.js';
@@ -8,7 +8,7 @@ let lastLst = 0;
 const D = Math.PI / 180;
 const R_EARTH = 1, R_MOON_ORBIT = 3.0, R_SUN = 5.4;   // not to scale (real: 1 : 60 : 23 500)
 // Home view: from above the north side of the Moon's path (the pole of that path: the celestial pole in
-// the simplified model, else the ecliptic pole at RA 18h, dec +66.56), which turns with the sky, so it is
+// the level 1 model, else the ecliptic pole at RA 18h, dec +66.56), which turns with the sky, so it is
 // worked out from the sidereal time when the view is reset.
 const ECL_POLE_DEC = PATH_POLE_DEC;
 function homeFor(lst) {
@@ -70,7 +70,7 @@ export function createOrbit(container, labelsEl) {
   const moon = new THREE.Mesh(new THREE.SphereGeometry(0.4, 48, 32), new THREE.MeshStandardMaterial({ color: 0xe9e6dc, roughness: 1 }));
   scene.add(moon);
 
-  // Moon's path (the celestial equator in the simplified model; else the ecliptic, to within 5 degrees) and the Sun-Earth-Moon lines and angle.
+  // Moon's path (the celestial equator in the level 1 model; else the ecliptic, to within 5 degrees) and the Sun-Earth-Moon lines and angle.
   const orbitPts = Array.from({ length: 129 }, () => new THREE.Vector3());
   const orbitLine = line(orbitPts, 0xc9d1e3, { opacity: 0.45 }); scene.add(orbitLine);
   const sunRay = line([new THREE.Vector3(), new THREE.Vector3()], 0xffc850, { opacity: 0.9 });
@@ -80,8 +80,8 @@ export function createOrbit(container, labelsEl) {
   const arc = line(arcPts, 0xff8f6b, { opacity: 1 }); scene.add(arc);
 
   const mkLabel = (cls, text) => { const el = document.createElement('div'); el.className = `tag ${cls}`; el.textContent = text; labelsEl.appendChild(el); return el; };
-  const tags = { sun: mkLabel('sun', 'Sun'), moon: mkLabel('moon', 'Moon'), you: mkLabel('you', `You, ${LAT}°N`), angle: mkLabel('angle', '') };
-  const anchors = { sun: new THREE.Vector3(), moon: new THREE.Vector3(), you: obsPos.clone().multiplyScalar(1.6), angle: new THREE.Vector3() };
+  const tags = { sun: mkLabel('sun', 'Sun'), moon: mkLabel('moon', 'Moon'), you: mkLabel('you', `You, ${LAT}°N`) };
+  const anchors = { sun: new THREE.Vector3(), moon: new THREE.Vector3(), you: obsPos.clone().multiplyScalar(1.6) };
 
   const v = (a) => new THREE.Vector3(a[0], a[1], a[2]);
   const setLine = (l, pts) => { l.geometry.setFromPoints(pts); l.geometry.attributes.position.needsUpdate = true; };
@@ -106,7 +106,6 @@ export function createOrbit(container, labelsEl) {
     setLine(orbitLine, orbitPts);
 
     // Sun-Earth-Moon angle, drawn along the Moon's path from the Sun's direction to the Moon's.
-    const ang = sd.angleTo(md);
     const r = 1.75;
     const span = st.E <= 180 ? st.E : st.E - 360;
     for (let k = 0; k <= 64; k++) {
@@ -115,14 +114,8 @@ export function createOrbit(container, labelsEl) {
       arcPts[k].set(Math.cos(d) * Math.cos(H), Math.sin(d), Math.cos(d) * Math.sin(H)).multiplyScalar(r);
     }
     setLine(arc, arcPts);
-    const mid = arcPts[32].clone().normalize().multiplyScalar(r + 0.75);
-    anchors.angle.copy(mid);
-    const deg = Math.round(ang / D);
-    const side = st.E < 180 ? 'east of the Sun' : 'west of the Sun';
-    tags.angle.textContent = deg === 0 || deg === 180 ? `${deg}°` : `${deg}° ${side}`;
     anchors.sun.copy(sun.position);
     anchors.moon.copy(moon.position);
-    return deg;
   }
 
   function resize() {
@@ -134,7 +127,7 @@ export function createOrbit(container, labelsEl) {
   new ResizeObserver(resize).observe(container);
   resize();
 
-  const OFFSET = { sun: 'translate(-50%, -190%)', moon: 'translate(-50%, -190%)', you: 'translate(-50%, 70%)', angle: 'translate(-50%, -50%)' };
+  const OFFSET = { sun: 'translate(-50%, -190%)', moon: 'translate(-50%, -190%)', you: 'translate(-50%, 70%)' };
   function placeLabels() {
     const w = container.clientWidth, h = container.clientHeight;
     for (const k of Object.keys(tags)) {

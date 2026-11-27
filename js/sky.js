@@ -163,17 +163,14 @@ export function createSky(canvas) {
       ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x, y, 30, 0, 7); ctx.fill();
       ctx.fillStyle = '#ffe27a'; ctx.beginPath(); ctx.arc(x, y, 11, 0, 7); ctx.fill();
     }
-    let moonNote = '';
     if (st.moon.alt > -1 && st.moon.az >= AZ_MIN && st.moon.az <= AZ_MAX) {
       const [x, y] = toXY(g, st.moon.az, st.moon.alt);
       const newish = st.E < 12 || st.E > 348;
       if (newish) {
         ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(255,255,255,0.7)';
         ctx.beginPath(); ctx.arc(x, y, 20, 0, 7); ctx.stroke(); ctx.restore();
-        moonNote = 'Moon is up but lost in the Sun’s glare: its lit side faces away from us.';
       } else drawMoon(x, y, 20, st, g, daylight);
-      if (st.sun.alt > 0 && !newish) moonNote = 'Daytime moon: both are above the horizon.';
-    } else if (st.moon.alt <= -1) moonNote = 'Moon is below the horizon.';
+    }
 
     // 24-hour strip: when each body is above the horizon today.
     const sx0 = g.pad + 30, sx1 = W - g.pad, sy = g.stripTop;
@@ -191,7 +188,7 @@ export function createSky(canvas) {
     ctx.textAlign = 'left';
     ctx.fillStyle = '#ff6b6b'; ctx.fillRect(tx(t) - 1, sy - 3, 2, 36);
 
-    return { st, sp, mp, moonNote };
+    return { st, sp, mp };
   }
 
   return { render, layout, rerender: () => last && render(...last) };

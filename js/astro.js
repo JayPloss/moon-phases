@@ -9,7 +9,7 @@ export const LAT = 45.2;            // degrees north: Knowlton, Quebec (45.217 N
 export const PLACE = 'Knowlton, QC';
 // Sun's ecliptic longitude on 27 November (it moves ~1 degree a day; held fixed on the page).
 export const SUN_LON = 245.0;
-// Simplified model (this version): Sun and Moon both travel the celestial equator, as the Sun does at
+// Level 1 model: Sun and Moon both travel the celestial equator, as the Sun does at
 // the equinoxes, so the Moon's daily arc has exactly the Sun's shape and only its timing changes with
 // phase. The Sun-Earth-Moon angle is still exactly the elongation, so the phases are unchanged.
 // Set SIMPLE = false to put both back on the ecliptic (real seasonal Sun, Moon riding high and low).
@@ -119,16 +119,18 @@ export function clock(h) {
   return `${h12}:${String(mm).padStart(2, '0')} ${ap}`;
 }
 
+// Phase name from the lit percentage the page shows beside it (rounded), so the two always agree.
+// New and full: 0-1% and 99-100% lit, about 1.2 days either side. Quarters: 42-58% lit, about 0.75 day
+// either side. Crescent and gibbous take the rest; waxing until full, waning after.
 export function phaseName(age) {
   const E = elongation(age);
-  if (E < 6 || E > 354) return 'New moon';
-  if (E < 84) return 'Waxing crescent';
-  if (E < 96) return 'First quarter';
-  if (E < 174) return 'Waxing gibbous';
-  if (E < 186) return 'Full moon';
-  if (E < 264) return 'Waning gibbous';
-  if (E < 276) return 'Last quarter';
-  return 'Waning crescent';
+  const pct = Math.round(((1 - Math.cos(E * D)) / 2) * 100);
+  if (pct <= 1) return 'New moon';
+  if (pct >= 99) return 'Full moon';
+  const wax = E < 180;
+  if (pct >= 42 && pct <= 58) return wax ? 'First quarter' : 'Last quarter';
+  if (pct < 42) return wax ? 'Waxing crescent' : 'Waning crescent';
+  return wax ? 'Waxing gibbous' : 'Waning gibbous';
 }
 
 // Sunrise / sunset for the fixed season (the Sun's declination does not depend on moon age).
@@ -175,31 +177,6 @@ export function dayTag(h) {
   if (h < 0) return ' (day before)';
   if (h >= 24) return ' (next day)';
   return '';
-}
-
-// Hours above the horizon for the pass on now (or the next one), and how much of it the Sun is also up.
-export function hoursUp(age, t) {
-  const p = pass(age, t, 'moon');
-  if (p.rise == null || p.set == null) return null;
-  let day = 0;
-  const n = Math.max(1, Math.round((p.set - p.rise) * 60));
-  for (let i = 0; i < n; i++) {
-    const tau = p.rise + ((i + 0.5) / n) * (p.set - p.rise);
-    if (state(age + (tau - t) / 24, tau).sun.alt > 0) day += (p.set - p.rise) / n;
-  }
-  return { up: p.set - p.rise, day };
-}
-
-// The same, averaged over one month of moon ages (sampled every quarter day, each at the age's own moonrise).
-export function monthAverage() {
-  let up = 0, day = 0, n = 0;
-  for (let a = 0; a < SYNODIC; a += 0.25) { const h = hoursUp(a, 12); if (h) { up += h.up; day += h.day; n++; } }
-  return { up: up / n, day: day / n };
-}
-
-export function hm(h) {
-  const m = Math.round(h * 60);
-  return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
 }
 
 // Sun's ecliptic longitude on a day of the year (1 = 1 January): mean-anomaly formula, good to about a degree.

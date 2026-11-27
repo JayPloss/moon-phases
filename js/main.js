@@ -1,4 +1,4 @@
-import { SYNODIC, SUN_EVENTS, LAT, PLACE, pass, clock, dayTag, phaseName, state, hoursUp, monthAverage, hm } from './astro.js';
+import { SYNODIC, SUN_EVENTS, LAT, PLACE, pass, clock, phaseName, state } from './astro.js';
 import { createSky } from './sky.js';
 import { createLevel2, createLevel3 } from './levels.js';
 
@@ -11,7 +11,6 @@ let age = 17.5, t = 8.27;
 
 // Two sets of sliders, one per panel; both drive the same state, so moving either moves both views.
 const ageSliders = [...document.querySelectorAll('.age')], timeSliders = [...document.querySelectorAll('.time')];
-const playButtons = [...document.querySelectorAll('.play')];
 ageSliders.forEach((s) => { s.max = SYNODIC.toFixed(2); });
 
 const wrapAge = (a) => ((a % SYNODIC) + SYNODIC) % SYNODIC;
@@ -23,25 +22,15 @@ function render() {
   const ageText = `Day ${age.toFixed(1)} of 29.53 · ${phaseName(age)} · ${Math.round(r.st.lit * 100)}% lit`;
   document.querySelectorAll('.ageOut').forEach((o) => { o.textContent = ageText; });
   document.querySelectorAll('.timeOut').forEach((o) => { o.textContent = clock(t); });
-  const mp = r.mp;
-  const rise = mp.rise == null ? 'does not rise' : `rises ${clock(mp.rise)}${dayTag(mp.rise)}`;
-  const set = mp.set == null ? 'does not set' : `sets ${clock(mp.set)}${dayTag(mp.set)}`;
-  $('status').textContent = `${clock(t)}. Sun up ${clock(SUN_EVENTS.rise)}, down ${clock(SUN_EVENTS.set)}. Moon ${rise}, ${set}. ${r.moonNote}`;
-  // Phase name from the elongation (Sun-Earth-Moon angle), shown in the 3D panel's top corner.
+  // Phase name from the same lit percentage, shown in the 3D panel's top corner.
   $('phaseTag').innerHTML = `${phaseName(age)}<small>${Math.round(r.st.lit * 100)}% lit</small>`;
-  // Hours above the horizon: the Sun today, the Moon over its pass on now (or next), and its daylight share.
-  const h = hoursUp(age, t);
-  $('hoursNow').innerHTML = `<span class="sunT">Sun: ${hm(SUN_EVENTS.set - SUN_EVENTS.rise)} up today</span> · `
-    + (h ? `<span class="moonT">Moon: ${hm(h.up)} up, ${hm(h.day)} of it in daylight</span>` : '<span class="moonT">Moon: —</span>');
 }
-const MONTH = monthAverage();
-$('hoursMonth').textContent = ` (each pass ${hm(MONTH.up)} rise to set, on average ${hm(MONTH.day)} of it in daylight)`;
 document.querySelector('.place').textContent = `${LAT}°N – ${PLACE}`;
 
-ageSliders.forEach((s) => s.addEventListener('input', () => { stop(); clearBeat(); age = +s.value; render(); }));
+ageSliders.forEach((s) => s.addEventListener('input', () => { clearBeat(); age = +s.value; render(); }));
 // Moving the clock moves the Moon along too: it keeps ageing as the hours pass.
 timeSliders.forEach((s) => s.addEventListener('input', () => {
-  stop(); clearBeat();
+  clearBeat();
   const nt = +s.value;
   age = wrapAge(age + (nt - t) / 24); t = nt; render();
 }));
@@ -65,7 +54,7 @@ const BEATS = {
 const CAPTIONS = {
   a: { q: 'So the moon <em>was</em> going to bed before the sun came up. That was two weeks ago when we did my trailer move.',
        n: (p) => `A few days before full, the Moon is less than halfway round from the Sun, so it sets at ${clock(p.set)} while it is still dark. Sunrise is ${clock(SUN_EVENTS.rise)}.` },
-  b: { q: 'THEN it set exactly as the sun came up — that was the full moon. The full moon is when they’re exactly opposite each other like two tango dancers during a break.',
+  b: { q: 'THEN it set exactly as the sun came up — that was the full moon.',
        n: (p) => `Sun and Moon 180° apart, Earth between them. Moonset ${clock(p.set)}, sunrise ${clock(SUN_EVENTS.rise)}: one goes down as the other comes up.` },
   c: { q: 'NOW the moon is lingering in the daytime sky in the west, setting AFTER the sun has already come up.',
        n: (p) => `Past full, the Moon has slipped behind: it is more than 180° round from the Sun. Sunrise ${clock(SUN_EVENTS.rise)}, but the Moon does not set until ${clock(p.set)}.` },
@@ -75,7 +64,6 @@ const CAPTIONS = {
 
 function clearBeat() { document.querySelectorAll('.beat').forEach((b) => b.setAttribute('aria-pressed', 'false')); }
 function showBeat(key) {
-  stop();
   [age, t] = BEATS[key]();
   document.querySelectorAll('.beat').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.beat === key)));
   const p = pass(age, t, 'moon');
@@ -85,23 +73,6 @@ function showBeat(key) {
 }
 document.querySelectorAll('.beat').forEach((b) => b.addEventListener('click', () => showBeat(b.dataset.beat)));
 
-// Play the month: same clock time, one day after another for 29.53 days.
-let playing = null;
-function stop() { if (playing) { cancelAnimationFrame(playing.raf); playing = null; setPlayLabel('▶ Play the month'); } }
-function setPlayLabel(text) { playButtons.forEach((b) => { b.textContent = text; }); }
-playButtons.forEach((btn) => btn.addEventListener('click', () => {
-  if (playing) return stop();
-  clearBeat();
-  const start = performance.now(), from = age, secs = 20;
-  setPlayLabel('❚❚ Pause');
-  const step = (now) => {
-    const f = (now - start) / 1000 / secs;
-    if (f >= 1) { age = wrapAge(from + SYNODIC); render(); return stop(); }
-    age = wrapAge(from + f * SYNODIC); render();
-    playing.raf = requestAnimationFrame(step);
-  };
-  playing = { raf: requestAnimationFrame(step) };
-}));
 $('reset').addEventListener('click', () => orbit && orbit.resetView());
 
 new ResizeObserver(() => { sky.layout(); sky.rerender(); }).observe($('sky'));
@@ -125,7 +96,6 @@ const levels = [...document.querySelectorAll('.level')];
 function showLevel() {
   const n = { '#level2': 2, '#level3': 3 }[location.hash] || 1;
   levels.forEach((l, i) => { l.hidden = i + 1 !== n; });
-  if (n !== 1) stop();
   scrollTo(0, 0);
 }
 document.querySelectorAll('.go').forEach((b) => b.addEventListener('click', () => {
