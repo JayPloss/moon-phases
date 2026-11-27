@@ -1,7 +1,8 @@
 # moon-phases
 
 "Only the Moon Matters": an interactive page on why the Moon has phases, made for Ben Roberts (2026-11-27).
-The page has three levels, with sticky numbered tabs to jump between them:
+The page has three levels, shown one at a time: the page opens on level 1, and buttons at the bottom of each level
+go on or back (`#level2`, `#level3` in the address):
 1. Phases and geometry: the 3D panel first, then the sky panel; each has its own sliders and both drive one shared
    state. Simplified model: Sun and Moon both on the celestial equator, so the Moon's arc matches the Sun's and only
    its timing changes with phase.

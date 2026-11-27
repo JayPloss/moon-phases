@@ -118,15 +118,23 @@ const level2 = createLevel2($('level2'));
 const level3 = createLevel3($('level3'));
 level2.render(); level3.render();
 
-// Level tabs: mark the level the reader is in (the one whose section crosses a line just under the tabs).
-const chips = [...document.querySelectorAll('.chip')];
+// One level at a time. The page opens on level 1; the buttons at the bottom of each level go on or back.
+// The level lives in the address (#level2, #level3) so the browser's back button steps back too.
+// Each level keeps its own slider values while hidden, so moving between levels resets nothing.
 const levels = [...document.querySelectorAll('.level')];
-function markLevel() {
-  const line = document.querySelector('.levels').getBoundingClientRect().bottom + 40;
-  let cur = levels[0];
-  for (const l of levels) if (l.getBoundingClientRect().top <= line) cur = l;
-  chips.forEach((c) => c.setAttribute('aria-current', String(c.getAttribute('href') === '#' + cur.id)));
+function showLevel() {
+  const n = { '#level2': 2, '#level3': 3 }[location.hash] || 1;
+  levels.forEach((l, i) => { l.hidden = i + 1 !== n; });
+  if (n !== 1) stop();
+  scrollTo(0, 0);
 }
-addEventListener('scroll', markLevel, { passive: true }); addEventListener('resize', markLevel); markLevel();
+document.querySelectorAll('.go').forEach((b) => b.addEventListener('click', () => {
+  const n = b.dataset.go;
+  if (n === '1') { history.pushState(null, '', location.pathname + location.search); showLevel(); }
+  else location.hash = 'level' + n;
+}));
+addEventListener('hashchange', showLevel);
+addEventListener('popstate', showLevel);
+showLevel();
 
 window.__moon = { level2, level3, get: () => ({ age, t, st: state(age, t) }), showBeat };

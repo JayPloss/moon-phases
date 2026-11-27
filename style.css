@@ -35,17 +35,13 @@ sup { color: var(--sun); }
 footer p { margin: 0 0 6px; }
 h2 { font-size: 1.25rem; line-height: 1.25; margin: 0 0 10px; }
 h3 { font-size: 0.95rem; font-weight: 600; color: var(--muted); margin: 0 0 8px; }
-.levels { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-  margin: 0 -16px 16px; padding: 8px 16px; background: rgba(7,10,20,0.94); border-bottom: 1px solid var(--line);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-.chip { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 22px;
-  border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-weight: 600;
-  font-size: 0.95rem; touch-action: manipulation; }
-.chip span { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #1c2440;
-  color: var(--sun); font-size: 0.8rem; }
-.chip[aria-current="true"] { border-color: var(--sun); background: #1a1d2c; }
-.chip[aria-current="true"] span { background: var(--sun); color: #111; }
-.level { scroll-margin-top: 72px; margin: 0 0 32px; padding-top: 4px; }
+.level { margin: 0 0 32px; padding-top: 4px; }
+.level[hidden] { display: none; }
+.levelNav { display: grid; gap: 10px; margin: 20px 0 0; }
+.go { min-height: 52px; font-weight: 700; font-size: 1.02rem; }
+.go.fwd { background: var(--sun); color: #111; border-color: var(--sun); }
+.go.fwd:hover { background: #ffd57a; border-color: #ffd57a; }
+@media (min-width: 760px) { .levelNav { grid-template-columns: repeat(auto-fit, minmax(220px, 280px)); } }
 .levelHead { display: flex; align-items: center; gap: 10px; font-size: 1.35rem; }
 .levelHead .num { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
   background: var(--sun); color: #111; font-size: 1.05rem; }
@@ -114,4 +110,3 @@ footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line);
   #sky { height: 460px; } .orbitWrap { height: 460px; }
   .controls { margin-top: 30px; }
 }
-.later a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--sun); }

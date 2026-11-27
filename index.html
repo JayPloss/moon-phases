@@ -21,8 +21,9 @@
     <details class="howto">
       <summary>How to use</summary>
       <ul>
-        <li>The page has three levels; the numbered tabs at the top jump between them. <b>1</b> is the phases and the
-          geometry behind them, <b>2</b> how high the Moon rides, <b>3</b> the angle of its lit edge.</li>
+        <li>The page has three levels, shown one at a time; the buttons at the bottom of each level go on or back.
+          <b>1</b> is the phases and the geometry behind them, <b>2</b> how high the Moon rides, <b>3</b> the angle of
+          its lit edge.</li>
         <li><b>3D view:</b> drag to turn it, pinch or scroll to zoom. The red cone is you, the green disc your horizon:
           whatever is above the disc is in your sky. The orange arc is the Sun–Earth–Moon angle. Sizes and distances are
           not to scale. The name in the top corner is the phase that angle gives.</li>
@@ -34,12 +35,6 @@
       </ul>
     </details>
   </header>
-
-  <nav class="levels" aria-label="Levels">
-    <a href="#level1" class="chip" data-level="1"><span>1</span> Phases</a>
-    <a href="#level2" class="chip" data-level="2"><span>2</span> Height</a>
-    <a href="#level3" class="chip" data-level="3"><span>3</span> Lit edge</a>
-  </nav>
 
   <!-- ===================== Level 1 ===================== -->
   <section id="level1" class="level" aria-labelledby="l1h">
@@ -82,7 +77,7 @@
               timing changes.</p>
           </div>
           <p class="later">Real moons ride higher or lower through the month, and higher in winter than in summer –
-            <a href="#level2">level 2</a> shows it.</p>
+            level 2 shows it.</p>
         </div>
         <div class="controls" role="group" aria-label="Sky controls">
           <div class="beats" aria-label="Four moments">
@@ -110,10 +105,13 @@
       local sun time (noon = Sun due south). Rise and set are when the centre crosses a flat horizon, without the few
       minutes air refraction adds. Because of that simplification, real moonrise and moonset times differ from these by
       up to about two hours, and real sunrise in late November is about 7:30 am.</p>
+    <nav class="levelNav" aria-label="Levels">
+      <button class="go fwd" data-go="2">Proceed to level 2 →</button>
+    </nav>
   </section>
 
   <!-- ===================== Level 2 ===================== -->
-  <section id="level2" class="level" aria-labelledby="l2h">
+  <section id="level2" class="level" hidden aria-labelledby="l2h">
     <h2 id="l2h" class="levelHead"><span class="num">2</span> How high the Moon rides</h2>
     <p class="lead">The Moon travels the same path round the sky as the Sun, to within 5°. So a full moon, sitting
       opposite the Sun, rides high in winter when the Sun is low, and low in summer when the Sun is high.</p>
@@ -143,10 +141,14 @@
     <p class="fine">How level 2 is worked out: the Sun placed by date on the ecliptic (good to about a degree), the Moon
       on the ecliptic at its average speed. The Moon's own 5.1° tilt is left out, which can move its real height by up
       to 5°. The faint dotted arc is the level 1 arc, for comparison.</p>
+    <nav class="levelNav" aria-label="Levels">
+      <button class="go" data-go="1">← Back to level 1</button>
+      <button class="go fwd" data-go="3">Forward to level 3 →</button>
+    </nav>
   </section>
 
   <!-- ===================== Level 3 ===================== -->
-  <section id="level3" class="level" aria-labelledby="l3h">
+  <section id="level3" class="level" hidden aria-labelledby="l3h">
     <h2 id="l3h" class="levelHead"><span class="num">3</span> The angle of the lit edge</h2>
     <p class="lead">The lit edge always points along the sky toward the Sun. As the Moon crosses the sky, the direction to
       the Sun turns against your horizon, so the same phase can sit like a bowl at one hour and stand on edge at another.</p>
@@ -174,6 +176,9 @@
       along the great circle from the Moon to the Sun, which is why it can point slightly upward even when the Sun is a
       little lower than the Moon. The Moons are drawn much larger than life, every 90 minutes; the ringed one is the
       chosen time.</p>
+    <nav class="levelNav" aria-label="Levels">
+      <button class="go" data-go="2">← Back to level 2</button>
+    </nav>
   </section>
 
   <section class="notes">
