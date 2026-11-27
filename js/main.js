@@ -1,5 +1,6 @@
-import { SYNODIC, SUN_EVENTS, pass, clock, dayTag, phaseName, state } from './astro.js';
+import { SYNODIC, SUN_EVENTS, LAT, PLACE, pass, clock, dayTag, phaseName, state, hoursUp, monthAverage, hm } from './astro.js';
 import { createSky } from './sky.js';
+import { createLevel2, createLevel3 } from './levels.js';
 
 const $ = (id) => document.getElementById(id);
 const sky = createSky($('sky'));
@@ -26,7 +27,16 @@ function render() {
   const rise = mp.rise == null ? 'does not rise' : `rises ${clock(mp.rise)}${dayTag(mp.rise)}`;
   const set = mp.set == null ? 'does not set' : `sets ${clock(mp.set)}${dayTag(mp.set)}`;
   $('status').textContent = `${clock(t)}. Sun up ${clock(SUN_EVENTS.rise)}, down ${clock(SUN_EVENTS.set)}. Moon ${rise}, ${set}. ${r.moonNote}`;
+  // Phase name from the elongation (Sun-Earth-Moon angle), shown in the 3D panel's top corner.
+  $('phaseTag').innerHTML = `${phaseName(age)}<small>${Math.round(r.st.lit * 100)}% lit</small>`;
+  // Hours above the horizon: the Sun today, the Moon over its pass on now (or next), and its daylight share.
+  const h = hoursUp(age, t);
+  $('hoursNow').innerHTML = `<span class="sunT">Sun: ${hm(SUN_EVENTS.set - SUN_EVENTS.rise)} up today</span> · `
+    + (h ? `<span class="moonT">Moon: ${hm(h.up)} up, ${hm(h.day)} of it in daylight</span>` : '<span class="moonT">Moon: —</span>');
 }
+const MONTH = monthAverage();
+$('hoursMonth').textContent = ` (each pass ${hm(MONTH.up)} rise to set, on average ${hm(MONTH.day)} of it in daylight)`;
+document.querySelector('.place').textContent = `${LAT}°N – ${PLACE}`;
 
 ageSliders.forEach((s) => s.addEventListener('input', () => { stop(); clearBeat(); age = +s.value; render(); }));
 // Moving the clock moves the Moon along too: it keeps ageing as the hours pass.
@@ -104,4 +114,19 @@ import('./orbit3d.js').then(({ createOrbit }) => {
   render();
 }).catch((e) => { $('orbit').textContent = '3D view could not start on this device: ' + e.message; });
 
-window.__moon = { get: () => ({ age, t, st: state(age, t) }), showBeat };
+const level2 = createLevel2($('level2'));
+const level3 = createLevel3($('level3'));
+level2.render(); level3.render();
+
+// Level tabs: mark the level the reader is in (the one whose section crosses a line just under the tabs).
+const chips = [...document.querySelectorAll('.chip')];
+const levels = [...document.querySelectorAll('.level')];
+function markLevel() {
+  const line = document.querySelector('.levels').getBoundingClientRect().bottom + 40;
+  let cur = levels[0];
+  for (const l of levels) if (l.getBoundingClientRect().top <= line) cur = l;
+  chips.forEach((c) => c.setAttribute('aria-current', String(c.getAttribute('href') === '#' + cur.id)));
+}
+addEventListener('scroll', markLevel, { passive: true }); addEventListener('resize', markLevel); markLevel();
+
+window.__moon = { level2, level3, get: () => ({ age, t, st: state(age, t) }), showBeat };

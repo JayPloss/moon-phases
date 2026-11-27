@@ -12,63 +12,168 @@
 <body>
 <main>
   <header>
-    <h1>Only the Moon Matters</h1>
+    <div class="titleRow">
+      <img class="logo" src="img/moon-waxing-gibbous-nasa.jpg" width="240" height="240" alt="The Moon, waxing gibbous, craters sharp along the day-night line (NASA)">
+      <h1>Only the Moon Matters</h1>
+    </div>
     <p class="intro">The sky looks like a painting, but the geometry is simple: the Sun lights half the Moon, and we see
       that half from a different angle as the Moon circles us.</p>
+    <details class="howto">
+      <summary>How to use</summary>
+      <ul>
+        <li>The page has three levels; the numbered tabs at the top jump between them. <b>1</b> is the phases and the
+          geometry behind them, <b>2</b> how high the Moon rides, <b>3</b> the angle of its lit edge.</li>
+        <li><b>3D view:</b> drag to turn it, pinch or scroll to zoom. The red cone is you, the green disc your horizon:
+          whatever is above the disc is in your sky. The orange arc is the Sun–Earth–Moon angle. Sizes and distances are
+          not to scale. The name in the top corner is the phase that angle gives.</li>
+        <li>The Moon is lit only by the Sun, so its bright half always faces the Sun.</li>
+        <li><b>Moon's age</b> moves through the month; <b>time of day</b> turns the sky. In level 1 each panel has its own
+          sliders and both move both views.</li>
+        <li><b>The sky:</b> looking south, east on the left. The four numbered buttons jump to four moments;
+          <b>Play the month</b> runs 29.5 days at the same clock time.</li>
+      </ul>
+    </details>
   </header>
 
-  <section class="panel orbit" aria-labelledby="orbitTitle">
-    <p class="invite">Play with it and watch the phase follow the geometry.</p>
-    <div class="panelGrid">
-      <div class="view">
-        <h2 id="orbitTitle">The geometry: Earth held still, Sun and Moon going round</h2>
-        <div class="orbitWrap">
-          <div id="orbit"></div>
-          <div id="orbitLabels"></div>
-          <button id="reset" class="small">Reset view</button>
+  <nav class="levels" aria-label="Levels">
+    <a href="#level1" class="chip" data-level="1"><span>1</span> Phases</a>
+    <a href="#level2" class="chip" data-level="2"><span>2</span> Height</a>
+    <a href="#level3" class="chip" data-level="3"><span>3</span> Lit edge</a>
+  </nav>
+
+  <!-- ===================== Level 1 ===================== -->
+  <section id="level1" class="level" aria-labelledby="l1h">
+    <h2 id="l1h" class="levelHead"><span class="num">1</span> Phases and geometry</h2>
+
+    <section class="panel orbit" aria-labelledby="orbitTitle">
+      <div class="panelGrid">
+        <div class="view">
+          <h3 id="orbitTitle">The geometry: Earth held still, Sun and Moon going round</h3>
+          <div class="orbitWrap">
+            <div id="orbit"></div>
+            <div id="orbitLabels"></div>
+            <div id="phaseTag" aria-live="polite"></div>
+            <button id="reset" class="small">Reset view</button>
+          </div>
         </div>
-        <p class="status">Drag to turn it. The red cone is you, the green disc your horizon: whatever is above the disc
-          is in your sky. The Moon is lit only by the Sun, so its bright half always faces the Sun; the orange arc is the
-          Sun–Earth–Moon angle. Sizes and distances are not to scale.</p>
+        <div class="controls" role="group" aria-label="Geometry controls">
+          <label for="age1">Moon's age <output class="ageOut"></output></label>
+          <input id="age1" class="age" type="range" min="0" max="29.53" step="0.01">
+          <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
+          <label for="time1">Time of day <output class="timeOut"></output></label>
+          <input id="time1" class="time" type="range" min="0" max="24" step="0.0166667">
+          <button class="play">▶ Play the month</button>
+        </div>
       </div>
-      <div class="controls" role="group" aria-label="Geometry controls">
-        <label for="age1">Moon's age <output class="ageOut"></output></label>
-        <input id="age1" class="age" type="range" min="0" max="29.53" step="0.01">
-        <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
-        <label for="time1">Time of day <output class="timeOut"></output></label>
-        <input id="time1" class="time" type="range" min="0" max="24" step="0.0166667">
-        <button class="play">▶ Play the month</button>
+    </section>
+
+    <section class="panel sky" aria-labelledby="skyTitle">
+      <p class="invite">What that geometry looks like from the ground.</p>
+      <div class="panelGrid">
+        <div class="view">
+          <h3 id="skyTitle">The sky, looking south from <span class="place">45.2°N – Knowlton, QC</span></h3>
+          <canvas id="sky" aria-label="Sky view: east on the left, west on the right"></canvas>
+          <p id="status" class="status"></p>
+          <div class="hours" aria-live="polite">
+            <p id="hoursNow" class="hoursNow"></p>
+            <p class="hoursPoint">Most people only look up at night, but the Moon is up about 12 hours a day, and over a
+              month as much of that is in daylight as in the dark<span id="hoursMonth"></span>.</p>
+            <p class="fineLine">Simplified model: the Moon's arc is held to the same height as the Sun's, so only its
+              timing changes.</p>
+          </div>
+          <p class="later">Real moons ride higher or lower through the month, and higher in winter than in summer –
+            <a href="#level2">level 2</a> shows it.</p>
+        </div>
+        <div class="controls" role="group" aria-label="Sky controls">
+          <div class="beats" aria-label="Four moments">
+            <button class="beat" data-beat="a"><span>1</span> Setting before sunrise</button>
+            <button class="beat" data-beat="b"><span>2</span> Full: tango break</button>
+            <button class="beat" data-beat="c"><span>3</span> Daytime moon, now</button>
+            <button class="beat" data-beat="d"><span>4</span> New: rises with the Sun</button>
+          </div>
+          <figure class="caption" aria-live="polite">
+            <blockquote id="captionQuote"></blockquote>
+            <figcaption id="captionNote"></figcaption>
+          </figure>
+          <label for="age2">Moon's age <output class="ageOut"></output></label>
+          <input id="age2" class="age" type="range" min="0" max="29.53" step="0.01">
+          <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
+          <label for="time2">Time of day <output class="timeOut"></output></label>
+          <input id="time2" class="time" type="range" min="0" max="24" step="0.0166667">
+          <button class="play">▶ Play the month</button>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <p class="fine">How level 1 is worked out: an observer at 45.2° north (Knowlton, Quebec), the Sun and the Moon both
+      on the celestial equator, as the Sun is at the equinoxes, the Moon moving at its average speed, clock times in
+      local sun time (noon = Sun due south). Rise and set are when the centre crosses a flat horizon, without the few
+      minutes air refraction adds. Because of that simplification, real moonrise and moonset times differ from these by
+      up to about two hours, and real sunrise in late November is about 7:30 am.</p>
   </section>
 
-  <section class="panel sky" aria-labelledby="skyTitle">
-    <p class="invite">What that geometry looks like from the ground.</p>
+  <!-- ===================== Level 2 ===================== -->
+  <section id="level2" class="level" aria-labelledby="l2h">
+    <h2 id="l2h" class="levelHead"><span class="num">2</span> How high the Moon rides</h2>
+    <p class="lead">The Moon travels the same path round the sky as the Sun, to within 5°. So a full moon, sitting
+      opposite the Sun, rides high in winter when the Sun is low, and low in summer when the Sun is high.</p>
+    <div class="presets">
+      <button data-preset="355,full">Full moon in December</button>
+      <button data-preset="172,full">Full moon in June</button>
+    </div>
     <div class="panelGrid">
       <div class="view">
-        <h2 id="skyTitle">The sky, looking south from 40°N</h2>
-        <canvas id="sky" aria-label="Sky view: east on the left, west on the right"></canvas>
-        <p id="status" class="status"></p>
+        <h3>The day's arcs, looking south</h3>
+        <canvas id="arcs" aria-label="Arcs of the Sun and the Moon across the southern sky for the chosen date and phase"></canvas>
+        <p id="heightRead" class="hoursNow readout" aria-live="polite"></p>
+        <h3 class="chartTitle">Moon's highest point on each day of this month <span class="hint">(tap or drag to pick a day)</span></h3>
+        <canvas id="monthChart" aria-label="The Moon's highest altitude through the month, with the Sun's highest as a dashed line"></canvas>
       </div>
-      <div class="controls" role="group" aria-label="Sky controls">
-        <div class="beats" aria-label="Four moments">
-          <button class="beat" data-beat="a"><span>1</span> Setting before sunrise</button>
-          <button class="beat" data-beat="b"><span>2</span> Full: tango break</button>
-          <button class="beat" data-beat="c"><span>3</span> Daytime moon, now</button>
-          <button class="beat" data-beat="d"><span>4</span> New: rises with the Sun</button>
-        </div>
-        <figure class="caption" aria-live="polite">
-          <blockquote id="captionQuote"></blockquote>
-          <figcaption id="captionNote"></figcaption>
-        </figure>
-        <label for="age2">Moon's age <output class="ageOut"></output></label>
-        <input id="age2" class="age" type="range" min="0" max="29.53" step="0.01">
+      <div class="controls" role="group" aria-label="Height controls">
+        <label for="date2">Date <output class="dateOut"></output></label>
+        <input id="date2" type="range" min="1" max="365" step="1">
+        <div class="ends"><span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span></div>
+        <label for="age3">Moon's age <output class="age3Out"></output></label>
+        <input id="age3" type="range" min="0" max="29.53" step="0.01">
         <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
-        <label for="time2">Time of day <output class="timeOut"></output></label>
-        <input id="time2" class="time" type="range" min="0" max="24" step="0.0166667">
-        <button class="play">▶ Play the month</button>
+        <p class="note">In one month the Moon goes all the way round that path, so it climbs and sinks as much in 27 days
+          as the Sun does in a year. Its highest point is always 90° − 45.2° + its declination.</p>
       </div>
     </div>
+    <p class="fine">How level 2 is worked out: the Sun placed by date on the ecliptic (good to about a degree), the Moon
+      on the ecliptic at its average speed. The Moon's own 5.1° tilt is left out, which can move its real height by up
+      to 5°. The faint dotted arc is the level 1 arc, for comparison.</p>
+  </section>
+
+  <!-- ===================== Level 3 ===================== -->
+  <section id="level3" class="level" aria-labelledby="l3h">
+    <h2 id="l3h" class="levelHead"><span class="num">3</span> The angle of the lit edge</h2>
+    <p class="lead">The lit edge always points along the sky toward the Sun. As the Moon crosses the sky, the direction to
+      the Sun turns against your horizon, so the same phase can sit like a bowl at one hour and stand on edge at another.</p>
+    <div class="presets">
+      <button data-tilt="22.1,1">Last quarter, 1 am</button>
+      <button data-tilt="22.4,8">Last quarter, 8 am</button>
+      <button data-tilt="4.5,14">Crescent, 2 pm</button>
+      <button data-tilt="4.75,20">Crescent, 8 pm</button>
+    </div>
+    <div class="panelGrid">
+      <div class="view">
+        <h3>The Moon across the sky on 27 November, looking south</h3>
+        <canvas id="tilt" aria-label="The Moon drawn every 90 minutes along its path, each with its lit edge at the true angle"></canvas>
+        <p id="tiltRead" class="hoursNow readout" aria-live="polite"></p>
+      </div>
+      <div class="controls" role="group" aria-label="Lit edge controls">
+        <label for="age4">Moon's age <output class="age4Out"></output></label>
+        <input id="age4" type="range" min="0" max="29.53" step="0.01">
+        <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
+        <label for="time4">Time of day <output class="time4Out"></output></label>
+        <input id="time4" type="range" min="0" max="24" step="0.0166667">
+      </div>
+    </div>
+    <p class="fine">How level 3 is worked out: the same real Sun and Moon as level 2 on 27 November. The lit edge points
+      along the great circle from the Moon to the Sun, which is why it can point slightly upward even when the Sun is a
+      little lower than the Moon. The Moons are drawn much larger than life, every 90 minutes; the ringed one is the
+      chosen time.</p>
   </section>
 
   <section class="notes">
@@ -80,13 +185,68 @@
     <p>If the Moon's orbit lay flat on the Sun's path we would get an eclipse every new and full moon. It is tilted by
       about <b>5.1°</b>, so most months the Moon passes a little above or below the Sun or Earth's shadow; eclipses
       only happen when a new or full moon falls where the two paths cross.</p>
-    <p class="fine">How it is worked out: an observer at 40° north, the Sun where it is in late November (declination
-      −21°), the Moon on the Sun's path at its average speed, clock times in local sun time (noon = Sun due south).
-      Rise and set are when the centre crosses a flat horizon, without the few minutes air refraction adds. The Moon's
-      5° tilt and its slightly oval orbit are left out, which moves real times by up to about half an hour.</p>
   </section>
 
-  <footer>Made for Ben Roberts, 2026-11-27 - standard astronomy, no magic numbers.</footer>
+  <section class="why" aria-labelledby="whyTitle">
+    <h2 id="whyTitle">Why it is worth looking up</h2>
+    <p>The Moon has been our calendar for as long as there are records, and it still is for a lot of people. The Hebrew
+      and Chinese calendars count their months by the Moon and add a month every few years to keep up with the seasons;
+      the Islamic calendar follows the Moon alone, so its months drift through the year. The Hebrew leap months follow a
+      19-year cycle in which 235 lunations line up with the years, and Easter is still set from a full moon by tables
+      built on that same cycle.<sup>1</sup> Even the word “month” comes from the same old root as
+      “moon”.<sup>2</sup> And before writing, a row of pits dug at Warren Field in Scotland in the 8th
+      millennium BC may have tracked the Moon, though that reading is still argued over.<sup>3</sup></p>
+    <p>It is still the calendar for many animals. On the Great Barrier Reef, more than 30 coral species spawn together a
+      few nights after the late-spring full moon,<sup>4</sup> and moonlight is one of the cues that keeps
+      them in step.<sup>5</sup> Dung beetles steer by the faint polarized light of the
+      Moon,<sup>6</sup> and can hold a course by the Milky Way alone.<sup>7</sup> In the
+      dark Arctic winter, zooplankton, the tiny animals of the sea, sink deeper around each full moon.<sup>8</sup>
+      European nightjars feed more than twice as long on moonlit nights and migrate in waves after the full
+      moon.<sup>9</sup> Sea-turtle hatchlings crawl toward the brightest horizon, which is why beach
+      lights lead them astray.<sup>10</sup></p>
+    <p>Plants are a different story. Planting by the phases of the Moon is old advice, but it does not hold up: a 2020
+      review of more than 120 sources found no consistent lunar influence on plant life.<sup>11</sup></p>
+    <p>For almost all of our history the Moon was woven into how we lived, and now it is mostly background decor. It is
+      worth getting back. Once you know where it should be and why, you start looking for it, in daylight too, and the
+      sky stops being a painting and becomes a place you are standing in.</p>
+    <details class="refs">
+      <summary>Sources (11)</summary>
+      <ol>
+        <li id="s1">NASA Goddard, “Calendars”, after L. E. Doggett in the <i>Explanatory Supplement to the Astronomical
+          Almanac</i>. <a href="https://eclipse.gsfc.nasa.gov/SEhelp/calendars.html">eclipse.gsfc.nasa.gov</a></li>
+        <li id="s2">Indo-European Lexicon, University of Texas Linguistics Research Center: <i>mēnōt</i>, “month; moon”.
+          <a href="https://lrc.la.utexas.edu/lex/master/1292">lrc.la.utexas.edu</a></li>
+        <li id="s3">Gaffney et al., “Time and a Place: A luni-solar ‘time-reckoner’ from 8th millennium BC Scotland”,
+          <i>Internet Archaeology</i> 34 (2013). <a href="https://intarch.ac.uk/journal/issue34/1/">intarch.ac.uk</a></li>
+        <li id="s4">Harrison et al., “Mass spawning in tropical reef corals”, <i>Science</i> 223, 1186 (1984).
+          <a href="https://researchonline.jcu.edu.au/24203/">researchonline.jcu.edu.au</a></li>
+        <li id="s5">Kaniewska et al., “Signaling cascades and the importance of moonlight in coral broadcast mass
+          spawning”, <i>eLife</i> 4 (2015). <a href="https://doi.org/10.7554/eLife.09991">doi.org/10.7554/eLife.09991</a></li>
+        <li id="s6">Dacke et al., “Insect orientation to polarized moonlight”, <i>Nature</i> 424, 33 (2003).
+          <a href="https://doi.org/10.1038/424033a">doi.org/10.1038/424033a</a></li>
+        <li id="s7">Dacke et al., “Dung beetles use the Milky Way for orientation”, <i>Current Biology</i> 23, 298
+          (2013). <a href="https://doi.org/10.1016/j.cub.2012.12.034">doi.org/10.1016/j.cub.2012.12.034</a></li>
+        <li id="s8">Last et al., “Moonlight drives ocean-scale mass vertical migration of zooplankton during the Arctic
+          winter”, <i>Current Biology</i> 26, 244 (2016).
+          <a href="https://doi.org/10.1016/j.cub.2015.11.038">doi.org/10.1016/j.cub.2015.11.038</a></li>
+        <li id="s9">Norevik et al., “The lunar cycle drives migration of a nocturnal bird”, <i>PLOS Biology</i> 17
+          (2019). <a href="https://doi.org/10.1371/journal.pbio.3000456">doi.org/10.1371/journal.pbio.3000456</a></li>
+        <li id="s10">Florida Fish and Wildlife Conservation Commission, “Artificial Lighting and Sea Turtle Hatchling
+          Behavior”. <a href="https://myfwc.com/research/wildlife/sea-turtles/threats/artificial-lighting/">myfwc.com</a></li>
+        <li id="s11">Mayoral, Solbes, Cantó et al., “What Has Been Thought and Taught on the Lunar Influence on Plants
+          in Agriculture?”, <i>Agronomy</i> 10, 955 (2020), summarized by Illinois Extension (2022).
+          <a href="https://doi.org/10.3390/agronomy10070955">doi.org/10.3390/agronomy10070955</a> ·
+          <a href="https://extension.illinois.edu/blogs/garden-scoop/2022-04-16-lunar-influence-gardening">extension.illinois.edu</a></li>
+      </ol>
+    </details>
+  </section>
+
+  <footer>
+    <p>Made for Ben Roberts, 2026-11-27 - standard astronomy, no magic numbers.</p>
+    <p>Moon image: “Waxing Gibbous”, NASA's Goddard Space Flight Center Scientific Visualization Studio, rendered from
+      Lunar Reconnaissance Orbiter (LROC and LOLA) data; NASA Image and Video Library, GSFC_20171208_Archive_e000867.
+      NASA imagery is not protected by copyright in the United States (public domain).</p>
+  </footer>
 </main>
 <script type="module" src="js/main.js"></script>
 </body>

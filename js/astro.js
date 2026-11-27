@@ -5,9 +5,15 @@ export const SYNODIC = 29.530589;   // days, new moon to new moon
 export const SIDEREAL = 27.321662;  // days, one orbit relative to the stars
 export const OBLIQUITY = 23.44;     // degrees, tilt of Earth's axis to the ecliptic
 export const MOON_INCL = 5.14;      // degrees, tilt of the Moon's orbit to the ecliptic
-export const LAT = 40;              // degrees north, the observer
+export const LAT = 45.2;            // degrees north: Knowlton, Quebec (45.217 N, 72.519 W, Wikipedia)
+export const PLACE = 'Knowlton, QC';
 // Sun's ecliptic longitude on 27 November (it moves ~1 degree a day; held fixed on the page).
 export const SUN_LON = 245.0;
+// Simplified model (this version): Sun and Moon both travel the celestial equator, as the Sun does at
+// the equinoxes, so the Moon's daily arc has exactly the Sun's shape and only its timing changes with
+// phase. The Sun-Earth-Moon angle is still exactly the elongation, so the phases are unchanged.
+// Set SIMPLE = false to put both back on the ecliptic (real seasonal Sun, Moon riding high and low).
+export const SIMPLE = true;
 
 const D = Math.PI / 180;
 
@@ -41,24 +47,32 @@ export function altAz(v) {
   return { alt, az };
 }
 
-const SUN_EQ = eclToEq(SUN_LON);
+// Where a body at longitude `lon` along the shared path sits on the sky, in RA and declination.
+export const pathToEq = (lon, simple = SIMPLE) => (simple ? { ra: ((lon % 360) + 360) % 360, dec: 0 } : eclToEq(lon));
+// The pole of that path (for the 3D home view): the celestial pole when SIMPLE, else the ecliptic pole.
+export const PATH_POLE_DEC = SIMPLE ? 90 : 90 - OBLIQUITY;
+
+const SUN_EQ = pathToEq(SUN_LON);
 
 // Elongation (Moon east of Sun along the ecliptic) for a moon age in days.
 export const elongation = (age) => (((age / SYNODIC) * 360) % 360 + 360) % 360;
 
 // Full state at local solar clock time t (hours) for moon age (days since new) at that moment.
-export function state(age, t) {
+// Level 1 uses the defaults (simplified paths). Levels 2 and 3 pass real = true and the Sun's ecliptic
+// longitude for the date: Sun and Moon on the ecliptic (the Moon's own 5.1-degree tilt still left out).
+export function state(age, t, real = false, sunLon = SUN_LON) {
+  const sunEq = real ? eclToEq(sunLon) : SUN_EQ;
   const Hs = (t - 12) * 15;                 // Sun's hour angle: noon = due south
-  const lst = SUN_EQ.ra + Hs;               // local sidereal time, degrees
+  const lst = sunEq.ra + Hs;                // local sidereal time, degrees
   const E = elongation(age);
-  const moonLon = SUN_LON + E;
-  const m = eclToEq(moonLon);
-  const sunDir = dirFromHaDec(Hs, SUN_EQ.dec);
+  const moonLon = sunLon + E;
+  const m = pathToEq(moonLon, real ? false : SIMPLE);
+  const sunDir = dirFromHaDec(Hs, sunEq.dec);
   const moonDir = dirFromHaDec(lst - m.ra, m.dec);
   return {
     t, age, E, lst, moonLon,
     sunDir, moonDir,
-    sun: { ...altAz(sunDir), dec: SUN_EQ.dec },
+    sun: { ...altAz(sunDir), dec: sunEq.dec },
     moon: { ...altAz(moonDir), dec: m.dec },
     // Illuminated fraction from the Sun-Earth-Moon angle (Sun treated as infinitely far).
     lit: (1 - Math.cos(E * D)) / 2,
@@ -162,3 +176,36 @@ export function dayTag(h) {
   if (h >= 24) return ' (next day)';
   return '';
 }
+
+// Hours above the horizon for the pass on now (or the next one), and how much of it the Sun is also up.
+export function hoursUp(age, t) {
+  const p = pass(age, t, 'moon');
+  if (p.rise == null || p.set == null) return null;
+  let day = 0;
+  const n = Math.max(1, Math.round((p.set - p.rise) * 60));
+  for (let i = 0; i < n; i++) {
+    const tau = p.rise + ((i + 0.5) / n) * (p.set - p.rise);
+    if (state(age + (tau - t) / 24, tau).sun.alt > 0) day += (p.set - p.rise) / n;
+  }
+  return { up: p.set - p.rise, day };
+}
+
+// The same, averaged over one month of moon ages (sampled every quarter day, each at the age's own moonrise).
+export function monthAverage() {
+  let up = 0, day = 0, n = 0;
+  for (let a = 0; a < SYNODIC; a += 0.25) { const h = hoursUp(a, 12); if (h) { up += h.up; day += h.day; n++; } }
+  return { up: up / n, day: day / n };
+}
+
+export function hm(h) {
+  const m = Math.round(h * 60);
+  return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
+}
+
+// Sun's ecliptic longitude on a day of the year (1 = 1 January): mean-anomaly formula, good to about a degree.
+export function sunLonForDay(doy) {
+  const g = (357.53 + 0.98560 * (doy - 2)) * D;    // mean anomaly, perihelion about 3 January
+  return ((280.46 + 0.98565 * (doy - 1) + 1.915 * Math.sin(g) + 0.02 * Math.sin(2 * g)) % 360 + 360) % 360;
+}
+// Highest altitude of a body of declination dec as it crosses the meridian (south of the zenith here).
+export const transitAlt = (dec) => 90 - LAT + dec;

@@ -2,14 +2,15 @@
 // Positions come from the same direction vectors as the sky view (js/astro.js).
 import * as THREE from '../vendor/three.module.min.js';
 import { OrbitControls } from '../vendor/OrbitControls.js';
-import { LAT, OBLIQUITY, SUN_LON, eclToEq } from './astro.js';
+import { LAT, PLACE, OBLIQUITY, SUN_LON, pathToEq, PATH_POLE_DEC } from './astro.js';
 let lastLst = 0;
 
 const D = Math.PI / 180;
 const R_EARTH = 1, R_MOON_ORBIT = 3.0, R_SUN = 5.4;   // not to scale (real: 1 : 60 : 23 500)
-// Home view: from above the north side of the Moon's orbit (the ecliptic pole, RA 18h, dec +66.56),
-// which turns with the sky, so it is worked out from the sidereal time when the view is reset.
-const ECL_POLE_DEC = 90 - OBLIQUITY;
+// Home view: from above the north side of the Moon's path (the pole of that path: the celestial pole in
+// the simplified model, else the ecliptic pole at RA 18h, dec +66.56), which turns with the sky, so it is
+// worked out from the sidereal time when the view is reset.
+const ECL_POLE_DEC = PATH_POLE_DEC;
 function homeFor(lst) {
   const H = (lst - 270) * D, d = ECL_POLE_DEC * D;
   const pole = new THREE.Vector3(Math.cos(d) * Math.cos(H), Math.sin(d), Math.cos(d) * Math.sin(H));
@@ -69,7 +70,7 @@ export function createOrbit(container, labelsEl) {
   const moon = new THREE.Mesh(new THREE.SphereGeometry(0.4, 48, 32), new THREE.MeshStandardMaterial({ color: 0xe9e6dc, roughness: 1 }));
   scene.add(moon);
 
-  // Moon's orbit (the ecliptic, to within 5 degrees) and the Sun-Earth-Moon lines and angle.
+  // Moon's path (the celestial equator in the simplified model; else the ecliptic, to within 5 degrees) and the Sun-Earth-Moon lines and angle.
   const orbitPts = Array.from({ length: 129 }, () => new THREE.Vector3());
   const orbitLine = line(orbitPts, 0xc9d1e3, { opacity: 0.45 }); scene.add(orbitLine);
   const sunRay = line([new THREE.Vector3(), new THREE.Vector3()], 0xffc850, { opacity: 0.9 });
@@ -79,7 +80,7 @@ export function createOrbit(container, labelsEl) {
   const arc = line(arcPts, 0xff8f6b, { opacity: 1 }); scene.add(arc);
 
   const mkLabel = (cls, text) => { const el = document.createElement('div'); el.className = `tag ${cls}`; el.textContent = text; labelsEl.appendChild(el); return el; };
-  const tags = { sun: mkLabel('sun', 'Sun'), moon: mkLabel('moon', 'Moon'), you: mkLabel('you', 'You, 40°N'), angle: mkLabel('angle', '') };
+  const tags = { sun: mkLabel('sun', 'Sun'), moon: mkLabel('moon', 'Moon'), you: mkLabel('you', `You, ${LAT}°N`), angle: mkLabel('angle', '') };
   const anchors = { sun: new THREE.Vector3(), moon: new THREE.Vector3(), you: obsPos.clone().multiplyScalar(1.6), angle: new THREE.Vector3() };
 
   const v = (a) => new THREE.Vector3(a[0], a[1], a[2]);
@@ -96,9 +97,9 @@ export function createOrbit(container, labelsEl) {
     setLine(sunRay, [new THREE.Vector3(), sd.clone().multiplyScalar(R_SUN - 0.45)]);
     setLine(moonRay, [new THREE.Vector3(), md.clone().multiplyScalar(R_MOON_ORBIT - 0.41)]);
 
-    // Ecliptic circle at the Moon's distance, turned to today's sidereal time.
+    // The Moon's path at the Moon's distance, turned to today's sidereal time.
     for (let k = 0; k <= 128; k++) {
-      const q = eclToEq((k / 128) * 360);
+      const q = pathToEq((k / 128) * 360);
       const H = (st.lst - q.ra) * D, d = q.dec * D;
       orbitPts[k].set(Math.cos(d) * Math.cos(H), Math.sin(d), Math.cos(d) * Math.sin(H)).multiplyScalar(R_MOON_ORBIT);
     }
@@ -109,7 +110,7 @@ export function createOrbit(container, labelsEl) {
     const r = 1.75;
     const span = st.E <= 180 ? st.E : st.E - 360;
     for (let k = 0; k <= 64; k++) {
-      const q = eclToEq(SUN_LON + (span * k) / 64);
+      const q = pathToEq(SUN_LON + (span * k) / 64);
       const H = (st.lst - q.ra) * D, d = q.dec * D;
       arcPts[k].set(Math.cos(d) * Math.cos(H), Math.sin(d), Math.cos(d) * Math.sin(H)).multiplyScalar(r);
     }

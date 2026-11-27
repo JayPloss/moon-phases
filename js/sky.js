@@ -1,4 +1,4 @@
-// Sky view: an observer at 40 degrees north facing south, east on the left, west on the right.
+// Sky view: an observer at LAT degrees north (js/astro.js) facing south, east on the left, west on the right.
 import { state, pass, dayTrack, clock, dayTag, SUN_EVENTS, HORIZON } from './astro.js';
 
 const AZ_MIN = 40, AZ_MAX = 320, ALT_MAX = 80;

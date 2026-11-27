@@ -7,8 +7,60 @@
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; overflow-x: hidden; }
 main { max-width: 1280px; margin: 0 auto; padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); }
-h1 { font-size: 1.6rem; line-height: 1.2; margin: 8px 0 8px; }
-h2 { font-size: 0.95rem; font-weight: 600; color: var(--muted); margin: 0 0 8px; }
+h1 { font-size: 2.15rem; line-height: 1.08; margin: 0; letter-spacing: -0.01em; }
+.titleRow { display: flex; align-items: center; gap: 14px; margin: 6px 0 10px; }
+.logo { flex: none; width: 76px; height: 76px; border-radius: 50%; display: block; }
+.howto { margin: 0 0 14px; }
+.howto summary { min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; color: var(--sun);
+  font-weight: 600; touch-action: manipulation; }
+.howto ul { margin: 4px 0 0; padding-left: 20px; color: #cfd5e6; font-size: 0.92rem; max-width: 75ch; }
+.howto li { margin-bottom: 6px; }
+#phaseTag { position: absolute; top: 8px; right: 8px; pointer-events: none; text-align: right; padding: 5px 10px;
+  border-radius: 8px; background: rgba(0,0,0,0.6); color: var(--moon); font-weight: 700; font-size: 1rem; line-height: 1.2; }
+#phaseTag small { display: block; font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+.place { white-space: nowrap; }
+.hours { margin: 10px 0 0; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.hours p { margin: 0; }
+.hoursNow { font-weight: 600; font-variant-numeric: tabular-nums; }
+.hoursNow .sunT { color: var(--sun); } .hoursNow .moonT { color: var(--moon); }
+.hoursPoint { color: #cfd5e6; font-size: 0.92rem; margin-top: 4px !important; }
+.fineLine { color: var(--muted); font-size: 0.8rem; margin-top: 4px !important; }
+.later { color: var(--muted); font-size: 0.9rem; margin: 8px 0 0; }
+.why { max-width: 75ch; margin-top: 8px; }
+.why p { color: #cfd5e6; }
+.why .refs { font-size: 0.8rem; color: var(--muted); }
+.why .refs ol { padding-left: 20px; margin: 4px 0 0; }
+.why .refs a { color: var(--muted); }
+sup { color: var(--sun); }
+footer p { margin: 0 0 6px; }
+h2 { font-size: 1.25rem; line-height: 1.25; margin: 0 0 10px; }
+h3 { font-size: 0.95rem; font-weight: 600; color: var(--muted); margin: 0 0 8px; }
+.levels { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  margin: 0 -16px 16px; padding: 8px 16px; background: rgba(7,10,20,0.94); border-bottom: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.chip { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 22px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-weight: 600;
+  font-size: 0.95rem; touch-action: manipulation; }
+.chip span { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #1c2440;
+  color: var(--sun); font-size: 0.8rem; }
+.chip[aria-current="true"] { border-color: var(--sun); background: #1a1d2c; }
+.chip[aria-current="true"] span { background: var(--sun); color: #111; }
+.level { scroll-margin-top: 72px; margin: 0 0 32px; padding-top: 4px; }
+.levelHead { display: flex; align-items: center; gap: 10px; font-size: 1.35rem; }
+.levelHead .num { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--sun); color: #111; font-size: 1.05rem; }
+.lead { color: #cfd5e6; margin: 0 0 12px; max-width: 70ch; }
+.presets { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 0 0 12px; }
+.presets button { font-size: 0.9rem; line-height: 1.2; }
+#arcs { display: block; width: 100%; height: 250px; border-radius: 10px; border: 1px solid var(--line); }
+#monthChart { display: block; width: 100%; height: 190px; border-radius: 10px; border: 1px solid var(--line); touch-action: pan-y; cursor: pointer; }
+#tilt { display: block; width: 100%; height: 300px; border-radius: 10px; border: 1px solid var(--line); }
+.readout { margin: 8px 0 12px; }
+.chartTitle .hint { font-weight: 400; }
+.note { color: var(--muted); font-size: 0.88rem; margin: 6px 0 0; }
+.refs summary { min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; color: var(--muted); font-weight: 600; }
+.refs li { margin-bottom: 4px; }
+.refs a { display: inline-flex; align-items: center; min-height: 44px; }
 .intro { margin: 0 0 16px; color: #cfd5e6; max-width: 70ch; }
 
 .beats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -53,6 +105,8 @@ input[type=range] { width: 100%; height: 44px; margin: 0; accent-color: var(--su
 footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
 
 @media (max-width: 420px) { .ends span:nth-child(2), .ends span:nth-child(4) { display: none; } }
+@media (min-width: 760px) { h1 { font-size: 3rem; } .logo { width: 104px; height: 104px; } }
+@media (min-width: 760px) { .presets { grid-template-columns: repeat(4, auto); justify-content: start; } #arcs { height: 320px; } #tilt { height: 380px; } }
 @media (min-width: 760px) { .beats { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1000px) {
   .panelGrid { grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); align-items: start; }
@@ -60,3 +114,4 @@ footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line);
   #sky { height: 460px; } .orbitWrap { height: 460px; }
   .controls { margin-top: 30px; }
 }
+.later a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; color: var(--sun); }
