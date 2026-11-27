@@ -145,6 +145,79 @@
       chosen time.</p>
     <nav class="levelNav" aria-label="Levels">
       <button class="go" data-go="2">← Back to level 2</button>
+      <button class="go fwd" data-go="4">Forward to level 4 →</button>
+    </nav>
+  </section>
+
+  <!-- ===================== Level 4 ===================== -->
+  <section id="level4" class="level" hidden aria-labelledby="l4h">
+    <h2 id="l4h" class="levelHead"><span class="num">4</span> How the Moon lights the night</h2>
+    <!-- TODO(attribution): the verified attribution and quote go here, replacing the neutral sentence below.
+         Waiting on the verification worker; do not name the author until the wording is confirmed. -->
+    <p class="lead">Natural navigators point out that the full moon is not the best-lit night: it rises as the Sun
+      sets, so it is low and dim through the evening, while a night or two either side the Moon is already up as
+      twilight fades and lights most of the night. Here is the light on open ground at
+      <span data-fact="lat">45.2°N</span>, Knowlton, on 27 November, worked out minute by minute.</p>
+    <div class="presets nightPresets">
+      <button data-night="14.765">Full moon</button>
+      <button data-night="12.765">Two nights before full</button>
+      <button data-night="16.765">Two nights after full</button>
+      <button data-night="7.38">First quarter</button>
+      <button data-night="4.00">Crescent</button>
+    </div>
+    <div class="panelGrid">
+      <div class="view">
+        <h3 class="chartTitle">Light on the ground, sunset to sunrise <span class="hint">(lux; each line up is ten times brighter)</span></h3>
+        <canvas id="night" aria-label="Light on the ground through the night on a log scale: twilight in gold, moonlight in silver, the total as a white line"></canvas>
+        <p class="key"><span class="sw tw"></span>Sky light from the Sun below the horizon <span class="sw mo"></span>Moonlight
+          <span class="sw tot"></span>Both together <span class="sw ok"></span>Above the line</p>
+        <p id="nightRead" class="hoursNow readout" aria-live="polite"></p>
+      </div>
+      <div class="controls" role="group" aria-label="Night light controls">
+        <label for="nightAge">Moon's age <output class="nightAgeOut"></output></label>
+        <input id="nightAge" type="range" min="0" max="29.53" step="0.01">
+        <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
+        <p class="note">The green line, 0.01 lux, is our choice for “you could walk without a torch”: about the light of a
+          half moon high in the sky. It is a judgement, not a measured limit.</p>
+      </div>
+    </div>
+    <div class="verdict">
+      <h3>What the chart shows here</h3>
+      <ul>
+        <li><b>Full moon:</b> above the line all night, <span data-fact="fullUsable"></span>. The Moon is low at dusk, but
+          twilight covers that hour, and it is brightest when it is highest: <span data-fact="fullMax"></span>.</li>
+        <li><b>Two nights before full:</b> the Moon is already high at sunset, so the first hour of dark is brighter
+          (<span data-fact="before6"></span> lux at 6 pm against <span data-fact="full6"></span> at full). But it sets at
+          <span data-fact="beforeSet"></span> and leaves a dark spell before dawn: <span data-fact="beforeUsable"></span>.</li>
+        <li><b>Two nights after full:</b> the Moon rises at <span data-fact="afterRise"></span>, after twilight has faded,
+          leaving a dark spell, then lights the rest of the night: <span data-fact="afterUsable"></span>.</li>
+      </ul>
+      <p>So in late November at Knowlton, the full moon still gives the longest and brightest night. The nights either
+        side win only the hour after sunset, before full. The chart assumes a flat, open horizon: behind trees or hills a
+        low Moon is hidden, which favours a Moon that is already high at dusk.</p>
+    </div>
+    <p class="fine">How level 4 is worked out (values are approximate, good to perhaps a factor of two on a clear night):
+      the same real Sun and Moon as levels 2 and 3, clock in local sun time. <b>Moonlight</b> uses Krisciunas and
+      Schaefer's model of moonlight<sup>a</sup>: the Moon's brightness by phase angle α, m = −12.73 + 0.026|α| +
+      4×10⁻⁹α⁴ (from Allen's <i>Astrophysical Quantities</i>), which already includes how much of the Moon is lit (a
+      half moon gives about a tenth of the light of a full one, not half, because its rough surface is mostly in shadow
+      when lit from the side); dimmed by the air, 0.172 magnitudes per air mass, along their air-mass formula, which
+      holds down to the horizon; and spread over level ground by the sine of the Moon's height. It leaves out the
+      surge of up to about 35% in the last day around exact full. <b>Twilight</b> uses the US Naval Observatory's
+      illuminance model<sup>b</sup>, with its floor of 0.0005 lux for starlight and airglow on a clear moonless night.
+      Clouds, snow, the Moon's own 5.1° tilt, and moonlight after the Moon has set are left out.</p>
+    <details class="refs">
+      <summary>Sources</summary>
+      <ol type="a">
+        <li>K. Krisciunas and B. E. Schaefer, “A model of the brightness of moonlight”, <i>Publications of the
+          Astronomical Society of the Pacific</i> 103: 1033–1039 (1991), eqs. 8, 9 and 14.
+          <a href="https://doi.org/10.1086/132921">doi.org/10.1086/132921</a></li>
+        <li>P. M. Janiczek and J. A. DeYoung, <i>Computer Programs for Sun and Moon Illuminance</i>, US Naval Observatory
+          Circular 171 (1987). <a href="https://apps.dtic.mil/sti/pdfs/AD1112511.pdf">apps.dtic.mil</a></li>
+      </ol>
+    </details>
+    <nav class="levelNav" aria-label="Levels">
+      <button class="go" data-go="3">← Back to level 3</button>
     </nav>
   </section>
 
@@ -211,5 +284,6 @@
   </footer>
 </main>
 <script type="module" src="js/main.js"></script>
+<script type="module" src="js/night.js"></script>
 </body>
 </html>

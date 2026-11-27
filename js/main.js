@@ -127,7 +127,7 @@ level2.render(); level3.render();
 // Each level keeps its own slider values while hidden, so moving between levels resets nothing.
 const levels = [...document.querySelectorAll('.level')];
 function showLevel() {
-  const n = { '#level2': 2, '#level3': 3 }[location.hash] || 1;
+  const n = { '#level2': 2, '#level3': 3, '#level4': 4 }[location.hash] || 1;
   levels.forEach((l, i) => { l.hidden = i + 1 !== n; });
   scrollTo(0, 0);
 }

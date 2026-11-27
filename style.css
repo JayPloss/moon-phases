@@ -99,3 +99,26 @@ footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line);
   #sky { height: 460px; } .orbitWrap { height: 460px; }
   .controls { margin-top: 30px; }
 }
+
+/* Level 4: night light */
+#night { display: block; width: 100%; height: 320px; border-radius: 10px; border: 1px solid var(--line); background: #0a0f1f; }
+.nightPresets { grid-template-columns: repeat(2, 1fr); }
+.nightPresets button:last-child { grid-column: 1 / -1; }
+.presets button[aria-pressed="true"] { border-color: var(--sun); background: #1a1d2c; }
+.key { margin: 8px 0 0; font-size: 0.85rem; color: var(--muted); line-height: 1.9; }
+.key .sw { display: inline-block; width: 14px; height: 10px; border-radius: 2px; margin: 0 5px 0 10px; vertical-align: middle; }
+.key .sw:first-child { margin-left: 0; }
+.sw.tw { background: rgba(255,200,80,0.6); } .sw.mo { background: rgba(223,229,242,0.6); }
+.sw.tot { background: var(--text); height: 2px; } .sw.ok { background: #6fd39a; height: 6px; }
+.hoursNow .okT { color: #6fd39a; } .hoursNow .dim { color: var(--muted); font-weight: 400; }
+.verdict { max-width: 75ch; margin: 18px 0 8px; }
+.verdict h3 { color: var(--text); font-size: 1.05rem; }
+.verdict ul { padding-left: 20px; margin: 0 0 8px; color: #cfd5e6; }
+.verdict li { margin-bottom: 6px; }
+.verdict p { color: #cfd5e6; margin: 0; }
+@media (min-width: 760px) {
+  .nightPresets { grid-template-columns: repeat(5, auto); }
+  .nightPresets button:last-child { grid-column: auto; }
+  #night { height: 400px; }
+}
+#level4 .fine { max-width: 75ch; }
