@@ -8,30 +8,33 @@ let orbit = null;
 // One state drives both views: moon age (days since new moon) at the shown moment, and clock time.
 let age = 17.5, t = 8.27;
 
-const ageSlider = $('age'), timeSlider = $('time');
-ageSlider.max = SYNODIC.toFixed(2);
+// Two sets of sliders, one per panel; both drive the same state, so moving either moves both views.
+const ageSliders = [...document.querySelectorAll('.age')], timeSliders = [...document.querySelectorAll('.time')];
+const playButtons = [...document.querySelectorAll('.play')];
+ageSliders.forEach((s) => { s.max = SYNODIC.toFixed(2); });
 
 const wrapAge = (a) => ((a % SYNODIC) + SYNODIC) % SYNODIC;
 
 function render() {
   const r = sky.render(age, t);
   if (orbit) orbit.update(r.st);
-  ageSlider.value = age; timeSlider.value = t;
-  $('ageOut').textContent = `Day ${age.toFixed(1)} of 29.53 · ${phaseName(age)} · ${Math.round(r.st.lit * 100)}% lit`;
-  $('timeOut').textContent = clock(t);
+  ageSliders.forEach((s) => { s.value = age; }); timeSliders.forEach((s) => { s.value = t; });
+  const ageText = `Day ${age.toFixed(1)} of 29.53 · ${phaseName(age)} · ${Math.round(r.st.lit * 100)}% lit`;
+  document.querySelectorAll('.ageOut').forEach((o) => { o.textContent = ageText; });
+  document.querySelectorAll('.timeOut').forEach((o) => { o.textContent = clock(t); });
   const mp = r.mp;
   const rise = mp.rise == null ? 'does not rise' : `rises ${clock(mp.rise)}${dayTag(mp.rise)}`;
   const set = mp.set == null ? 'does not set' : `sets ${clock(mp.set)}${dayTag(mp.set)}`;
   $('status').textContent = `${clock(t)}. Sun up ${clock(SUN_EVENTS.rise)}, down ${clock(SUN_EVENTS.set)}. Moon ${rise}, ${set}. ${r.moonNote}`;
 }
 
-ageSlider.addEventListener('input', () => { stop(); clearBeat(); age = +ageSlider.value; render(); });
+ageSliders.forEach((s) => s.addEventListener('input', () => { stop(); clearBeat(); age = +s.value; render(); }));
 // Moving the clock moves the Moon along too: it keeps ageing as the hours pass.
-timeSlider.addEventListener('input', () => {
+timeSliders.forEach((s) => s.addEventListener('input', () => {
   stop(); clearBeat();
-  const nt = +timeSlider.value;
+  const nt = +s.value;
   age = wrapAge(age + (nt - t) / 24); t = nt; render();
-});
+}));
 
 // The four beats from Jay's texts.
 const BEATS = {
@@ -74,12 +77,13 @@ document.querySelectorAll('.beat').forEach((b) => b.addEventListener('click', ()
 
 // Play the month: same clock time, one day after another for 29.53 days.
 let playing = null;
-function stop() { if (playing) { cancelAnimationFrame(playing.raf); playing = null; $('play').textContent = '▶ Play the month'; } }
-$('play').addEventListener('click', () => {
+function stop() { if (playing) { cancelAnimationFrame(playing.raf); playing = null; setPlayLabel('▶ Play the month'); } }
+function setPlayLabel(text) { playButtons.forEach((b) => { b.textContent = text; }); }
+playButtons.forEach((btn) => btn.addEventListener('click', () => {
   if (playing) return stop();
   clearBeat();
   const start = performance.now(), from = age, secs = 20;
-  $('play').textContent = '❚❚ Pause';
+  setPlayLabel('❚❚ Pause');
   const step = (now) => {
     const f = (now - start) / 1000 / secs;
     if (f >= 1) { age = wrapAge(from + SYNODIC); render(); return stop(); }
@@ -87,14 +91,14 @@ $('play').addEventListener('click', () => {
     playing.raf = requestAnimationFrame(step);
   };
   playing = { raf: requestAnimationFrame(step) };
-});
+}));
 $('reset').addEventListener('click', () => orbit && orbit.resetView());
 
 new ResizeObserver(() => { sky.layout(); sky.rerender(); }).observe($('sky'));
 
 showBeat('c');
 
-// The 3D view loads after the sky view so a slow phone still gets the sky first.
+// The 3D view loads after the first sky render so a slow phone still gets something on screen at once.
 import('./orbit3d.js').then(({ createOrbit }) => {
   orbit = createOrbit($('orbit'), $('orbitLabels'));
   render();

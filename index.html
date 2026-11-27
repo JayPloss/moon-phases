@@ -3,60 +3,73 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Why the Moon has phases: the sky you see, and the geometry behind it.">
+<meta name="description" content="Only the Moon Matters: the geometry of the Sun, Earth and Moon, and the sky it gives you.">
 <meta name="theme-color" content="#070a14">
-<title>Why the Moon has phases</title>
+<title>Only the Moon Matters</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Ccircle cx=%278%27 cy=%278%27 r=%277%27 fill=%27%23f4f1e6%27/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
   <header>
-    <h1>Why the Moon has phases</h1>
-    <p class="intro">The Sun always lights exactly half of the Moon. As the Moon circles us once a month, we look at that
-      lit half from a different angle each night: face-on at full moon, from behind at new moon. The angle shows up
-      in the sky as a delay: each day the Moon rises about 50 minutes later than the day before, so the gap between
-      sunrise and moonrise grows through the month, and the shape changes with it.</p>
+    <h1>Only the Moon Matters</h1>
+    <p class="intro">The sky looks like a painting, but the geometry is simple: the Sun lights half the Moon, and we see
+      that half from a different angle as the Moon circles us.</p>
   </header>
 
-  <section class="beats" aria-label="Four moments">
-    <button class="beat" data-beat="a"><span>1</span> Setting before sunrise</button>
-    <button class="beat" data-beat="b"><span>2</span> Full: tango break</button>
-    <button class="beat" data-beat="c"><span>3</span> Daytime moon, now</button>
-    <button class="beat" data-beat="d"><span>4</span> New: rises with the Sun</button>
-  </section>
-  <figure class="caption" aria-live="polite">
-    <blockquote id="captionQuote"></blockquote>
-    <figcaption id="captionNote"></figcaption>
-  </figure>
-
-  <div class="views">
-    <section class="view sky">
-      <h2>The sky, looking south from 40°N</h2>
-      <canvas id="sky" aria-label="Sky view: east on the left, west on the right"></canvas>
-      <p id="status" class="status"></p>
-    </section>
-    <section class="controls" aria-label="Controls">
-      <label for="age">Moon's age <output id="ageOut"></output></label>
-      <input id="age" type="range" min="0" max="29.53" step="0.01">
-      <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
-      <label for="time">Time of day <output id="timeOut"></output></label>
-      <input id="time" type="range" min="0" max="24" step="0.0166667">
-      <button id="play">▶ Play the month</button>
-    </section>
-    <section class="view orbit">
-      <h2>The geometry: Earth held still, Sun and Moon going round</h2>
-      <div class="orbitWrap">
-        <div id="orbit"></div>
-        <div id="orbitLabels"></div>
-        <button id="reset" class="small">Reset view</button>
+  <section class="panel orbit" aria-labelledby="orbitTitle">
+    <p class="invite">Play with it and watch the phase follow the geometry.</p>
+    <div class="panelGrid">
+      <div class="view">
+        <h2 id="orbitTitle">The geometry: Earth held still, Sun and Moon going round</h2>
+        <div class="orbitWrap">
+          <div id="orbit"></div>
+          <div id="orbitLabels"></div>
+          <button id="reset" class="small">Reset view</button>
+        </div>
+        <p class="status">Drag to turn it. The red cone is you, the green disc your horizon: whatever is above the disc
+          is in your sky. The Moon is lit only by the Sun, so its bright half always faces the Sun; the orange arc is the
+          Sun–Earth–Moon angle. Sizes and distances are not to scale.</p>
       </div>
-      <p class="status">Drag to turn it. The red cone is you, the green disc your horizon: whatever is above the disc
-        is in your sky. The Moon is lit only by the Sun, so its bright half always faces the Sun; the orange arc is the
-        Sun–Earth–Moon angle. Sizes and distances are not to scale.</p>
-    </section>
-  </div>
+      <div class="controls" role="group" aria-label="Geometry controls">
+        <label for="age1">Moon's age <output class="ageOut"></output></label>
+        <input id="age1" class="age" type="range" min="0" max="29.53" step="0.01">
+        <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
+        <label for="time1">Time of day <output class="timeOut"></output></label>
+        <input id="time1" class="time" type="range" min="0" max="24" step="0.0166667">
+        <button class="play">▶ Play the month</button>
+      </div>
+    </div>
+  </section>
 
+  <section class="panel sky" aria-labelledby="skyTitle">
+    <p class="invite">What that geometry looks like from the ground.</p>
+    <div class="panelGrid">
+      <div class="view">
+        <h2 id="skyTitle">The sky, looking south from 40°N</h2>
+        <canvas id="sky" aria-label="Sky view: east on the left, west on the right"></canvas>
+        <p id="status" class="status"></p>
+      </div>
+      <div class="controls" role="group" aria-label="Sky controls">
+        <div class="beats" aria-label="Four moments">
+          <button class="beat" data-beat="a"><span>1</span> Setting before sunrise</button>
+          <button class="beat" data-beat="b"><span>2</span> Full: tango break</button>
+          <button class="beat" data-beat="c"><span>3</span> Daytime moon, now</button>
+          <button class="beat" data-beat="d"><span>4</span> New: rises with the Sun</button>
+        </div>
+        <figure class="caption" aria-live="polite">
+          <blockquote id="captionQuote"></blockquote>
+          <figcaption id="captionNote"></figcaption>
+        </figure>
+        <label for="age2">Moon's age <output class="ageOut"></output></label>
+        <input id="age2" class="age" type="range" min="0" max="29.53" step="0.01">
+        <div class="ends"><span>New</span><span>First quarter</span><span>Full</span><span>Last quarter</span><span>New</span></div>
+        <label for="time2">Time of day <output class="timeOut"></output></label>
+        <input id="time2" class="time" type="range" min="0" max="24" step="0.0166667">
+        <button class="play">▶ Play the month</button>
+      </div>
+    </div>
+  </section>
 
   <section class="notes">
     <h2>Two numbers worth knowing</h2>

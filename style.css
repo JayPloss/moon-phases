@@ -20,12 +20,14 @@ button:hover { border-color: #3a4566; }
   background: #1c2440; color: var(--sun); font-weight: 700; font-size: 0.85rem; }
 .beat[aria-pressed="true"] { border-color: var(--sun); background: #1a1d2c; }
 
-.caption { margin: 12px 0 16px; padding: 12px 14px; border-left: 3px solid var(--sun); background: var(--panel); border-radius: 0 10px 10px 0; }
+.caption { margin: 4px 0 8px; padding: 12px 14px; border-left: 3px solid var(--sun); background: var(--panel); border-radius: 0 10px 10px 0; }
 .caption blockquote { margin: 0 0 6px; font-size: 1.02rem; font-style: italic; }
 .caption figcaption { color: var(--muted); font-size: 0.92rem; }
 .caption:has(blockquote:empty) { display: none; }
 
-.views { display: grid; gap: 16px; }
+.panel { margin: 0 0 28px; }
+.invite { margin: 0 0 10px; font-size: 1.05rem; font-weight: 600; color: var(--sun); }
+.panelGrid { display: grid; gap: 12px; }
 .view { min-width: 0; }
 #sky { display: block; width: 100%; height: 390px; border-radius: 10px; border: 1px solid var(--line); }
 .status { color: var(--muted); font-size: 0.9rem; margin: 8px 0 0; }
@@ -43,7 +45,7 @@ button:hover { border-color: #3a4566; }
 .controls output { font-weight: 400; color: var(--muted); margin-left: 6px; }
 .ends { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin: -4px 0 8px; }
 input[type=range] { width: 100%; height: 44px; margin: 0; accent-color: var(--sun); touch-action: pan-y; }
-#play { margin-top: 6px; font-weight: 600; }
+.play { margin-top: 6px; font-weight: 600; }
 
 .notes { max-width: 75ch; }
 .notes p { color: #cfd5e6; }
@@ -53,8 +55,8 @@ footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid var(--line);
 @media (max-width: 420px) { .ends span:nth-child(2), .ends span:nth-child(4) { display: none; } }
 @media (min-width: 760px) { .beats { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1000px) {
-  .views { grid-template-columns: 1fr 1fr; grid-template-areas: "sky orbit" "ctrl ctrl"; }
-  .view.sky { grid-area: sky; } .view.orbit { grid-area: orbit; } .controls { grid-area: ctrl; margin: 0; }
-  #sky { height: 440px; } .orbitWrap { height: 440px; }
-  #play { justify-self: start; padding: 8px 24px; }
+  .panelGrid { grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); align-items: start; }
+  .panel .beats { grid-template-columns: repeat(2, 1fr); }
+  #sky { height: 460px; } .orbitWrap { height: 460px; }
+  .controls { margin-top: 30px; }
 }

@@ -1,6 +1,7 @@
 # moon-phases
 
-An interactive page that explains why the Moon has phases, made for Ben Roberts (2026-11-27).
+"Only the Moon Matters": an interactive page on why the Moon has phases, made for Ben Roberts (2026-11-27).
+The 3D geometry panel comes first, the sky panel below; each has its own sliders, and both sets drive one shared state.
 Live at https://jayploss.github.io/moon-phases/ (GitHub Pages from `main`, root folder).
 
 - `index.html`, `style.css`: the page. Plain HTML/CSS/JS, no build step.
