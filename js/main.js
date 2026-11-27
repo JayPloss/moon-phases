@@ -131,10 +131,14 @@ function showLevel() {
   levels.forEach((l, i) => { l.hidden = i + 1 !== n; });
   scrollTo(0, 0);
 }
-document.querySelectorAll('.go').forEach((b) => b.addEventListener('click', () => {
-  const n = b.dataset.go;
-  if (n === '1') { history.pushState(null, '', location.pathname + location.search); showLevel(); }
-  else location.hash = 'level' + n;
+// The level links are real links (#level1 … #level4), so they can be opened in a new tab, copied or long-pressed.
+// A plain click adds a history entry and shows the level without the browser's jump to the anchor;
+// a click with a modifier key is left to the browser.
+document.querySelectorAll('a.go').forEach((a) => a.addEventListener('click', (e) => {
+  if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  history.pushState(null, '', a.hash);
+  showLevel();
 }));
 addEventListener('hashchange', showLevel);
 addEventListener('popstate', showLevel);

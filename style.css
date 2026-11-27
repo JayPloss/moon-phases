@@ -29,7 +29,10 @@ h3 { font-size: 0.95rem; font-weight: 600; color: var(--muted); margin: 0 0 8px;
 .level { margin: 0 0 32px; padding-top: 4px; }
 .level[hidden] { display: none; }
 .levelNav { display: grid; gap: 10px; margin: 20px 0 0; }
-.go { min-height: 52px; font-weight: 700; font-size: 1.02rem; }
+.go { min-height: 52px; font-weight: 700; font-size: 1.02rem; display: flex; align-items: center; justify-content: center;
+  text-align: center; text-decoration: none; color: var(--text); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; padding: 8px 12px; line-height: 1.5; touch-action: manipulation; }
+.go:hover { border-color: #3a4566; }
 .go.fwd { background: var(--sun); color: #111; border-color: var(--sun); }
 .go.fwd:hover { background: #ffd57a; border-color: #ffd57a; }
 @media (min-width: 760px) { .levelNav { grid-template-columns: repeat(auto-fit, minmax(220px, 280px)); } }
